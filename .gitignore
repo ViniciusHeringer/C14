@@ -1,0 +1,29 @@
+# Ambientes Virtuais
+venv/
+/venv/
+*.venv
+.venv
+
+# Arquivos de cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Diretórios de build e distribuição
+/dist/
+/build/
+/target/
+
+# Arquivos de IDEs (Ex: VSCode, PyCharm)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos de dependências do pip
+*.egg-info/
+pip-wheel-metadata/
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
