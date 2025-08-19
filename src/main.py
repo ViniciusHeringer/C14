@@ -1,8 +1,11 @@
 # src/main.py
 
 import requests
-import json
+import os
 
+userDataPath = "UserData.txt"
+if os.path.exists(userDataPath):
+    os.remove(userDataPath)
 
 def fetch_users():
     """
@@ -24,7 +27,6 @@ def fetch_users():
         print(f"Erro ao fazer a requisição para a API: {e}")
         return None
 
-
 def display_users(users):
     """
     Exibe os nomes e e-mails dos usuários de forma organizada.
@@ -38,10 +40,15 @@ def display_users(users):
         print(f"- Nome: {user.get('name', 'N/A')}, Email: {user.get('email', 'N/A')}")
     print("-----------------------\n")
 
+def save_users(users):
+    stream = open(userDataPath, "a")
+    for user in users:
+        stream.write(f"Name: {user.get('name', 'N/A')}\nEMail{user.get('email', 'N/A')}\n\n")
+    stream.close()
 
 if __name__ == "__main__":
     # Ponto de entrada do script
     user_data = fetch_users()
     if user_data:
         display_users(user_data)
-
+        save_users(user_data)
