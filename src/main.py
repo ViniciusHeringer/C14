@@ -43,7 +43,7 @@ def display_users(users):
 def save_users(users):
     stream = open(userDataPath, "a")
     for user in users:
-        stream.write(f"EMail{user.get('email', 'N/A')}\nName: {user.get('name', 'N/A')}\n\n")
+        stream.write(f"Nome: {user.get('name', 'N/A')}\nE-Mail{user.get('email', 'N/A')}\n\n")
     stream.close()
 
 if __name__ == "__main__":
