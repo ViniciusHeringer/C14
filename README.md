@@ -1,92 +1,110 @@
-Projeto de Exemplo: API Fetcher em Python
-📝 Descrição do Projeto
+# Projeto de Exemplo: API Fetcher com Pipeline de CI/CD
+
+## 📝 Descrição do Projeto
+
 Este é um projeto simples em Python que demonstra um fluxo de desenvolvimento moderno, incluindo:
 
-Gerenciamento de dependências com pip e requirements.txt.
+* Gerenciamento de dependências com `pip` e `requirements.txt`.
+* Consumo de uma API REST pública (JSONPlaceholder) para buscar dados.
+* Uma suíte de testes unitários robusta com 20 cenários de teste.
+* Um script de build automatizado (`build.sh`) que prepara o ambiente e cria um artefato de distribuição.
+* Um pipeline de Integração e Entrega Contínua (CI/CD) completo com GitHub Actions.
 
-Consumo de uma API REST pública (JSONPlaceholder) para buscar dados.
+O objetivo principal é servir como um modelo para a criação de repositórios, automação de build, testes automatizados e notificação de status.
 
-Uma suíte de testes unitários robusta utilizando o framework unittest e unittest.mock.
+## 🚀 Status do Pipeline
 
-Um script de build automatizado (build.sh) que prepara o ambiente e cria um artefato de distribuição.
+[![Pipeline de CI/CD para Projeto Python](https://github.com/ViniciusHeringer/C14/actions/workflows/pipeline-principal.yml/badge.svg)](https://github.com/ViniciusHeringer/C14/actions/workflows/pipeline-principal.yml)
 
-O objetivo principal é servir como um modelo para a criação de repositórios, automação de build, práticas de teste e versionamento com Git e GitHub.
+## 🛠️ Configuração e Execução Manual
 
-🚀 Configuração e Execução
 Siga as instruções abaixo para configurar e executar o projeto em sua máquina local.
 
-Pré-requisitos
-Python 3
+### Pré-requisitos
 
-Git
+* [Python 3](https://www.python.org/downloads/)
+* [Git](https://git-scm.com/downloads/)
 
-Passos para Instalação e Build
-Clone o repositório:
+### Passos para Instalação e Build
 
-git clone https://github.com/ViniciusHeringer/C14/tree/tradução-ptbr
-cd C14
+1. **Clone o repositório:**
+   ```bash
+   git clone [https://github.com/ViniciusHeringer/C14.git](https://github.com/ViniciusHeringer/C14.git)
+   cd C14
+   ```
+2. **Dê permissão de execução ao script de build (para Linux/macOS/Git Bash):**
+   ```bash
+   chmod +x build.sh
+   ```
+3. **Execute o script de build:**
 
-Dê permissão de execução ao script de build (para Linux/macOS/Git Bash):
-
-chmod +x build.sh
-
-Execute o script de build:
 Este script irá criar um ambiente virtual, instalar as dependências e preparar a aplicação.
-
-./build.sh
-
-Como Executar a Aplicação
-Após o build ser concluído com sucesso, siga os passos abaixo para rodar o script:
-
-Ative o ambiente virtual:
-
-source venv/Scripts/activate
-
-Execute o script principal:
-
-py dist/app/main.py
-
+   ```bash
+   ./build.sh
+```
+**Como Executar a Aplicação:**
+1. **Ative o ambiente virtual:**
+```bash
+source venv/bin/activate  # No Linux/macOS
+# venv\Scripts\activate  # No Windows
+```
+2. **Execute o script principal:**
+```bash
+python src/main.py
+```
 Você deverá ver a lista de usuários buscada da API no seu terminal.
 
-Desative o ambiente virtual ao terminar:
-
+3. **Desative o ambiente virtual ao terminar::**
+```bash
 deactivate
+```
+**🧪 Testes Unitários**
 
-🧪 Testes Unitários
-O projeto conta com uma suíte de 20 testes unitários, divididos por funcionalidade, localizados na pasta tests/.
+O projeto conta com uma suíte de 20 testes unitários para garantir a qualidade e o funcionamento correto das funções.
 
-Como Executar os Testes
-Ative o ambiente virtual:
+**Como Executar os Testes Localmente**
 
-source venv/Scripts/activate
+*Certifique-se de que as dependências estão instaladas (execute ./build.sh primeiro).*
 
-Execute o comando de descoberta de testes na raiz do projeto:
+*Ative o ambiente virtual.*
 
+*Na raiz do projeto, execute o comando de descoberta de testes:*
+
+```bash
 python -m unittest discover
+```
 
-O resultado deve indicar que todos os 20 testes passaram com sucesso.
+**⚙️ CI/CD - Integração e Entrega Contínua**
 
-Evolução e Correção dos Testes (Caso de Estudo: test_save.py)
-Durante o desenvolvimento dos testes para a função save_users, surgiram desafios que ilustram bem o processo de depuração de testes unitários.
+Este projeto utiliza GitHub Actions para automatizar o fluxo de CI/CD. O workflow está definido em ```.github/workflows/pipeline-principal.yml```
 
-Problema Inicial: Divergência de Expectativas
+**Gatilhos do Pipeline**
 
-Comportamento da Função: A função save_users em src/main.py foi implementada para escrever os dados de um usuário (nome e e-mail) em uma única operação de escrita (stream.write(...)) por usuário.
+O pipeline é acionado automaticamente em duas situações:
 
-Falha nos Testes: A primeira versão de tests/test_save.py foi escrita sob a premissa de que haveria duas operações de escrita por usuário (uma para o nome, outra para o e-mail). Isso causou AssertionError nos testes, pois a contagem de chamadas (call_count) e o conteúdo de cada chamada não batiam com a realidade.
+1. Quando um push é feito para qualquer branch do repositório.
 
-Primeira Correção: Alinhamento dos Testes
+2. Quando um pull request é aberto ou atualizado.
 
-Solução: Os testes foram ajustados para refletir o comportamento real da função. As asserções que verificavam duas chamadas (assert_any_call) foram substituídas por uma única verificação (assert_called_with) que esperava o texto completo e formatado para cada usuário. A contagem de chamadas esperada também foi corrigida (ex: de 4 para 2 em um teste com dois usuários).
+**Etapas do Pipeline (Jobs)**
 
-Problema Final: Detalhe Sutil do Mock
+O pipeline é dividido em 3 jobs:
+1. **Execução dos Testes (```testes```):** 
+* Configura o ambiente Python.
+* Instala as dependências.
+* Executa a suíte completa de testes unitários.
+* **Artefato Gerado**: ```relatorio-de-testes```, um arquivo .txt com a saída completa dos testes.
+2. Build e Empacotamento (```empacotamento```):
+* Roda **em paralelo** com o job de testes para otimizar o tempo.
+* Executa o script ```build.sh``` para empacotar a aplicação.
+* **Artefato Gerado**: ```pacote-dist```, um arquivo .zip contendo a pasta dist pronta para distribuição.
+3. Envio de Notificação (```notificacao```):
+* Este job só é executado se os jobs de ```testes``` e ```empacotamento``` forem concluídos com sucesso.
+* Executa o script ```scripts/send_notification.py``` para enviar um e-mail de notificação.
+* As credenciais de e-mail são gerenciadas de forma segura através de **GitHub Secrets**:
 
-Falha Persistente: Mesmo após a correção principal, um teste continuou falhando (test_save_multiple_users_happy). O erro indicava que a lista de chamadas registradas pelo mock continha uma chamada extra: call.close().
+  * ```MAIL_SENDER```: E-mail do remetente.
+  * ```MAIL_RECIPIENT```: E-mail do destinatário.
+  * ```MAIL_PASSWORD```: Senha de app para o e-mail do remetente.
 
-Causa: A função save_users corretamente fecha o arquivo (stream.close()) após a escrita. O teste, ao usar handle.assert_has_calls(...), validava todas as chamadas feitas ao objeto de arquivo mockado, incluindo o close que não estava na lista de chamadas esperadas.
-
-Correção Final: Especificidade na Asserção
-
-Solução: A asserção foi refinada de handle.assert_has_calls(...) para handle.write.assert_has_calls(...). Essa pequena mudança instruiu o teste a validar apenas o histórico de chamadas do método write, ignorando a chamada ao método close e resolvendo o problema. O teste passou a focar exclusivamente no que queria validar: a operação de escrita.
-
-Este processo demonstra a importância de entender tanto o código de produção quanto o funcionamento detalhado das ferramentas de mock para criar testes precisos e confiáveis.
+Os artefatos gerados podem ser baixados diretamente da página de resumo da execução do workflow na aba "Actions" do repositório.
